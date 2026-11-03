@@ -1,0 +1,34 @@
+# 构建产物
+/dist/
+**/bin/
+**/obj/
+/build/
+.build/
+*.user
+*.suo
+.vs/
+
+# 运行时用户数据（配置/日志/学习记录）
+/runtime-userdir/
+/diag-userdir/
+_oldbuild*/
+
+# 生成的词典数据（由 tools/build_lexicon.py 从 data/raw 生成，见 data/README.md）
+/data/*.tsv
+
+# 下载的第三方语料（体积大、许可证独立，见 data/raw/README.md）
+/data/raw/*
+!/data/raw/README.md
+
+# 测试产物（GUI/端到端测试的截图、日志、临时用户目录）
+/tests/**/out/
+/tests/**/*.exe
+/tests/**/*.log
+/tests/e2e-userdir/
+/tests/_tmp-*/
+/tests/_zip*/
+
+# 系统文件
+Thumbs.db
+Desktop.ini
+desktop.ini

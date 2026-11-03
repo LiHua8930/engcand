@@ -1,0 +1,326 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英文候选助手 · 使用说明</title>
+<style>
+  :root {
+    --bg: #f4f7fb;
+    --card: #ffffff;
+    --ink: #1f2a37;
+    --muted: #5b6b7f;
+    --line: #e3eaf3;
+    --brand: #2f6fed;
+    --brand-2: #7a5af8;
+    --ok: #0f9d58;
+    --warn: #d97706;
+    --code-bg: #0f172a;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 500px at 10% -10%, #dbe7ff 0%, transparent 60%),
+      radial-gradient(1000px 400px at 100% 0%, #efe4ff 0%, transparent 55%),
+      var(--bg);
+    line-height: 1.75;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 40px 22px 72px; }
+  header.hero {
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+    color: #fff;
+    border-radius: 24px;
+    padding: 44px 40px 38px;
+    box-shadow: 0 24px 60px rgba(47, 111, 237, .28);
+    position: relative;
+    overflow: hidden;
+  }
+  header.hero::after {
+    content: "1 2 3 4 5 6 7 8 9";
+    position: absolute;
+    right: -18px; bottom: -22px;
+    font-size: 92px; font-weight: 800; letter-spacing: 6px;
+    color: rgba(255,255,255,.10);
+    white-space: nowrap;
+  }
+  .tag {
+    display: inline-block; font-size: 13px; letter-spacing: .08em;
+    background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.32);
+    padding: 4px 12px; border-radius: 999px; margin-bottom: 16px;
+  }
+  h1 { margin: 0 0 10px; font-size: 40px; line-height: 1.2; }
+  .sub { margin: 0; font-size: 17px; color: rgba(255,255,255,.92); max-width: 640px; }
+  .hero-meta { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .hero-meta span {
+    background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.26);
+    padding: 6px 13px; border-radius: 999px; font-size: 13.5px;
+  }
+  nav.toc {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin: 26px 0 6px;
+  }
+  nav.toc a {
+    text-decoration: none; font-size: 13.5px; color: var(--muted);
+    background: var(--card); border: 1px solid var(--line);
+    padding: 6px 13px; border-radius: 999px; transition: .18s;
+  }
+  nav.toc a:hover { color: var(--brand); border-color: #bcd0f5; transform: translateY(-1px); }
+  section.card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 28px 30px; margin-top: 22px; box-shadow: 0 6px 24px rgba(31,42,55,.05);
+  }
+  h2 {
+    margin: 0 0 14px; font-size: 23px; display: flex; align-items: center; gap: 10px;
+  }
+  h2 .num {
+    flex: none; width: 30px; height: 30px; border-radius: 10px;
+    background: linear-gradient(135deg, #e8f0ff, #efe8ff);
+    color: var(--brand); font-size: 15px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  h3 { margin: 22px 0 8px; font-size: 17px; color: #24344a; }
+  p, li { color: #33445c; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .steps { counter-reset: step; list-style: none; padding: 0; margin: 8px 0 0; }
+  .steps > li {
+    counter-increment: step; position: relative;
+    padding: 14px 16px 14px 58px; margin-bottom: 12px;
+    background: #f8faff; border: 1px solid var(--line); border-radius: 13px;
+  }
+  .steps > li::before {
+    content: counter(step);
+    position: absolute; left: 14px; top: 14px;
+    width: 28px; height: 28px; border-radius: 9px;
+    background: var(--brand); color: #fff; font-weight: 700; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .steps b { color: #1b2b40; }
+  code {
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    background: #eef3fa; color: #0b4ea2; padding: .12em .42em;
+    border-radius: 6px; font-size: .92em;
+  }
+  pre {
+    background: var(--code-bg); color: #d6e4ff; padding: 16px 18px; border-radius: 12px;
+    overflow-x: auto; font-size: 13.5px; line-height: 1.65;
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+  }
+  pre code { background: transparent; color: inherit; padding: 0; }
+  kbd {
+    display: inline-block; padding: 2px 8px; margin: 0 1px;
+    border: 1px solid #c8d4e6; border-bottom-width: 3px; border-radius: 7px;
+    background: #f7faff; color: #1f3a5f; font-size: 12.5px; font-weight: 600;
+    font-family: inherit;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 4px; font-size: 14.5px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: #21344d; background: #f7faff; font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  .demo {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    background: linear-gradient(180deg, #f8fbff, #f3f7ff);
+    border: 1px dashed #c5d6f2; border-radius: 13px; padding: 14px 16px; margin: 12px 0;
+    font-size: 14.5px;
+  }
+  .demo .chip {
+    background: #fff; border: 1px solid var(--line); border-radius: 9px;
+    padding: 5px 11px; box-shadow: 0 2px 6px rgba(31,42,55,.06);
+  }
+  .demo .chip b { color: var(--brand); margin-right: 6px; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 600; }
+  .badge.green { background: #e6f6ee; color: var(--ok); }
+  .badge.amber { background: #fdf1df; color: var(--warn); }
+  .faq-item { border-bottom: 1px solid var(--line); padding: 13px 0; }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-item .q { font-weight: 600; color: #1b2b40; margin-bottom: 4px; }
+  .faq-item .a { color: var(--muted); font-size: 14.5px; }
+  footer {
+    margin-top: 30px; text-align: center; color: var(--muted); font-size: 13px; line-height: 2;
+  }
+  footer a { color: var(--brand); text-decoration: none; }
+  @media (max-width: 640px) {
+    header.hero { padding: 30px 22px; }
+    h1 { font-size: 29px; }
+    section.card { padding: 20px 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="tag">Windows 托盘工具 · .NET 10 · 离线可用</div>
+    <h1>英文候选助手</h1>
+    <p class="sub">用中文输入法、偶尔要打英文？切到英文模式打字时，光标旁自动弹出英文单词 / 短语候选，按 <b>1-9</b> 一键选词，不用再猜拼写。</p>
+    <div class="hero-meta">
+      <span>约 4.8 万单词</span>
+      <span>2 千余常用短语</span>
+      <span>5 万词对联想</span>
+      <span>不抢焦点 · 不联网</span>
+      <span>无需管理员权限</span>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <a href="#install">安装与启动</a>
+    <a href="#use">基本用法</a>
+    <a href="#keys">快捷键</a>
+    <a href="#tray">托盘菜单</a>
+    <a href="#settings">设置项</a>
+    <a href="#selftest">自检</a>
+    <a href="#faq">常见问题</a>
+    <a href="#data">数据与许可</a>
+  </nav>
+
+  <section class="card" id="install">
+    <h2><span class="num">1</span>安装与启动</h2>
+    <p class="muted">在项目根目录 <code>english-cand\</code> 打开 PowerShell，依次执行：</p>
+    <ol class="steps">
+      <li><b>构建程序</b>：运行 <code>build.ps1</code>，生成 <code>dist\app\EngCand.exe</code> 并自动复制词典到 <code>dist\app\data\</code>。<br>
+        <span class="muted">也可以直接双击项目里的 <code>build.ps1</code>（右键 → 使用 PowerShell 运行）。</span></li>
+      <li><b>安装快捷方式</b>：运行 <code>install.ps1</code>，在桌面创建「英文候选助手」快捷方式；加 <code>-AutoStart</code> 可设置开机启动。</li>
+      <li><b>启动</b>：双击桌面「英文候选助手」，或双击项目根目录的 <code>启动.bat</code>。<br>
+        程序常驻系统托盘（任务栏右下角，图标可能在 <code>^</code> 隐藏区里）。</li>
+    </ol>
+    <pre><code># 在 english-cand 目录下
+powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
+# 可选：设置开机启动
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -AutoStart
+# 直接运行（不装快捷方式）
+.\dist\app\EngCand.exe</code></pre>
+    <p><span class="badge amber">注意</span> <code>EngCand.exe</code> 必须和 <code>data\</code> 目录放在一起；单独拷走 exe 会没有词典、不弹候选。</p>
+  </section>
+
+  <section class="card" id="use">
+    <h2><span class="num">2</span>基本用法</h2>
+    <ol class="steps">
+      <li>用搜狗拼音切到 <b>英文模式</b>（按 <kbd>Shift</kbd> 或点状态栏「中/英」），正常打字。</li>
+      <li>输入 <b>2 个字母以上</b>，候选窗在光标附近出现（默认最多 8 条）。</li>
+      <li>按 <kbd>1</kbd>~<kbd>9</kbd> 选择候选，当前输入的字母会替换成完整单词 / 短语；也可以 <b>鼠标点击</b> 候选。</li>
+      <li>按 <kbd>Esc</kbd> 关闭；继续打字会实时刷新候选。</li>
+    </ol>
+    <div class="demo">
+      <span>输入 <code>tha</code> →</span>
+      <span class="chip"><b>1</b>thank</span>
+      <span class="chip"><b>2</b>that</span>
+      <span class="chip"><b>3</b>than</span>
+      <span class="chip"><b>4</b>thanks</span>
+      <span class="chip"><b>5</b>thank you</span>
+      <span class="muted">…</span>
+    </div>
+    <p class="muted">中文组词时不会弹窗（自动识别搜狗组词窗口）；英文模式下才弹。程序不修改输入法状态、不联网。</p>
+  </section>
+
+  <section class="card" id="keys">
+    <h2><span class="num">3</span>快捷键</h2>
+    <table>
+      <thead><tr><th>快捷键</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>1</kbd> ~ <kbd>9</kbd></td><td>候选窗出现时选词（含小键盘；候选窗不可见时不影响正常输入）</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>关闭候选窗</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>E</kbd></td><td>启用 / 暂停英文候选（全局开关）</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd></td><td>显示状态气泡：词典数量、当前中/英判断、搜狗识别状态</td></tr>
+      </tbody>
+    </table>
+    <p class="muted">热键是全局注册的；若被其它程序占用会静默失败，此时可在托盘菜单里完成同样的操作。</p>
+  </section>
+
+  <section class="card" id="tray">
+    <h2><span class="num">4</span>托盘菜单</h2>
+    <p>右键任务栏托盘里的程序图标：</p>
+    <table>
+      <thead><tr><th>菜单项</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>启用 / 暂停</td><td>勾选状态；临时关闭候选，其它功能不受影响</td></tr>
+        <tr><td>模式</td><td><b>自动识别</b>（搜狗中/英自动判断）· <b>强制英文</b>（其它输入法/识别不准时用）· <b>强制中文</b>（完全不弹）</td></tr>
+        <tr><td>设置…</td><td>中文设置窗口，见下一节</td></tr>
+        <tr><td>状态信息</td><td>气泡显示词典规模、模式判断、搜狗窗口是否识别到</td></tr>
+        <tr><td>打开日志</td><td>在资源管理器里定位 <code>%APPDATA%\EngCand\engcand.log</code></td></tr>
+        <tr><td>退出</td><td>退出程序（配置自动保存）</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card" id="settings">
+    <h2><span class="num">5</span>设置项</h2>
+    <table>
+      <thead><tr><th>设置</th><th>默认</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>候选数量</td><td>8</td><td>1~9 条，对应数字键 1-9</td></tr>
+        <tr><td>最少前缀字母数</td><td>2</td><td>输入几个字母后才开始弹候选</td></tr>
+        <tr><td>单词候选 / 短语候选</td><td>开 / 开</td><td>分别控制两类候选是否出现</td></tr>
+        <tr><td>下一词联想</td><td>关</td><td>打完一个词 + 空格后联想下一个词（默认关闭避免打扰）</td></tr>
+        <tr><td>弹窗延迟</td><td>70 ms</td><td>等待输入法先处理按键，防止中文模式下误弹</td></tr>
+        <tr><td>提示音</td><td>关</td><td>弹出候选时是否播放提示音</td></tr>
+        <tr><td>选词学习</td><td>开</td><td>记录你选过的词，下次排更前（保存在 learning.json）</td></tr>
+        <tr><td>工作模式</td><td>自动</td><td>自动识别 / 强制英文 / 强制中文</td></tr>
+        <tr><td>IMM 辅助判断</td><td>开</td><td>用输入法转换状态辅助判断中/英文</td></tr>
+      </tbody>
+    </table>
+    <p class="muted">配置文件与日志在 <code>%APPDATA%\EngCand\</code>：<code>config.json</code>、<code>engcand.log</code>、<code>learning.json</code>、<code>selftest.log</code>。</p>
+  </section>
+
+  <section class="card" id="selftest">
+    <h2><span class="num">6</span>自检</h2>
+    <p>不需要打开界面即可验证词典与查询是否正常：</p>
+    <pre><code>cd dist\app
+.\EngCand.exe --selftest
+echo $LASTEXITCODE   # 0 = 通过，1 = 失败</code></pre>
+    <p>结果写入 exe 同目录的 <code>selftest.log</code> 和用户数据目录（默认 <code>%APPDATA%\EngCand</code>）下的 <code>selftest.log</code>；可用 <code>--userdir=&lt;目录&gt;</code> 覆盖用户数据目录（便携/测试用）。</p>
+    <pre><code>ready = True
+words = 48266  phrases = 1945
+query[th] =&gt; the{W,999979} | that{W,999896} | ...
+RESULT: PASS</code></pre>
+  </section>
+
+  <section class="card" id="faq">
+    <h2><span class="num">7</span>常见问题</h2>
+    <div class="faq-item">
+      <div class="q">打了英文，候选不弹？</div>
+      <div class="a">① 确认输入法是英文模式（中文组词时故意不弹）；② 托盘菜单「启用」是否勾选；③ 模式是否被设为「强制中文」；④ 是否已输入 ≥2 个字母；⑤ 以管理员权限运行的窗口收不到普通权限的键盘钩子（Windows 限制）；⑥ 用 <code>--selftest</code> 确认词典已加载。</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">数字键选词后文本没变化 / 重复？</div>
+      <div class="a">选词依赖「退格 + SendInput 注入」，个别编辑器 / 游戏 / 远程桌面不兼容。可先在记事本里验证；确认候选窗可见时数字键才会被接管。</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">快捷键没反应？</div>
+      <div class="a">多半被其它程序（截图/录屏/输入法工具）占用。程序会静默失败，可在托盘菜单完成同样操作，日志里会有记录。</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">托盘图标找不到？</div>
+      <div class="a">点任务栏右下角 <code>^</code> 展开隐藏图标，或把图标拖到任务栏固定。</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">启动提示「已经在运行」？</div>
+      <div class="a">程序是单实例的，看托盘图标即可；要重启先在托盘菜单「退出」。</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">怎么开机自启 / 怎么卸载？</div>
+      <div class="a">安装：<code>install.ps1 -AutoStart</code>；卸载：<code>uninstall.ps1</code>（加 <code>-PurgeData</code> 会同时删除 <code>%APPDATA%\EngCand</code> 里的配置、日志和学习记录）。</div>
+    </div>
+  </section>
+
+  <section class="card" id="data">
+    <h2><span class="num">8</span>数据来源与许可</h2>
+    <p>运行时词典：<code>words.tsv</code>（48,267 词）、<code>phrases.tsv</code>（2,240 条短语）、<code>word_bigrams.tsv</code>（50,000 词对），位于 <code>dist\app\data\</code>，由项目 <code>data\</code> 目录生成。</p>
+    <p>原始语料包括 FrequencyWords（OpenSubtitles，CC BY-SA 4.0）、google-10000-english、Peter Norvig 的 n-gram 统计、2ndLA 公开短语表（CC BY-SA 4.0）、baiango 习语表（The Unlicense）、自整理高频短语（本项目原创）等。</p>
+    <p class="muted">具体来源 URL、抓取方式与许可证见项目内 <code>data\raw\README.md</code>；词典版权归各上游项目所有。</p>
+  </section>
+
+  <footer>
+    英文候选助手（EngCand）v1.0.0 · C# .NET 10 WinForms · Windows 10/11 x64<br>
+    详细文档见项目根目录 <a href="../README.md">README.md</a> · 构建脚本 <code>build.ps1</code>
+  </footer>
+
+</div>
+</body>
+</html>
+

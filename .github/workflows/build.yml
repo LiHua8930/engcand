@@ -1,0 +1,67 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: 单元测试（WordBuffer / 键盘钩子 / 文本注入 / 搜狗状态）
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: 运行核心逻辑单元测试
+        run: dotnet run --project tests/wordbuf/EngCandCoreTests.csproj -c Release
+
+  build:
+    name: 构建 + 词典自检 + 打包免构建包
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: 下载并生成词典数据
+        shell: pwsh
+        run: |
+          python tools/fetch_raw.py
+          python tools/build_lexicon.py
+          python tools/check_lexicon.py --strict
+
+      - name: 构建并自检
+        shell: pwsh
+        run: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File ./build.ps1
+          ./dist/app/EngCand.exe --selftest --userdir=./.selftest
+          Get-Content ./.selftest/selftest.log | Select-Object -Last 2
+
+      - name: 打包便携版（启动.bat + dist\app + 文档）
+        shell: pwsh
+        run: |
+          $root = './package/英文候选助手'
+          New-Item -ItemType Directory -Force -Path "$root/dist" | Out-Null
+          Copy-Item ./dist/app "$root/dist/app" -Recurse
+          Copy-Item ./启动.bat, ./README.md, ./docs/使用说明.html "$root" -Force
+          Compress-Archive -Path './package/*' -DestinationPath './EngCand-win64.zip' -Force
+          Get-FileHash './EngCand-win64.zip' -Algorithm SHA256 | Format-List
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: EngCand-win64
+          path: EngCand-win64.zip
