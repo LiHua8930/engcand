@@ -47,8 +47,16 @@ jobs:
         shell: pwsh
         run: |
           powershell -NoProfile -ExecutionPolicy Bypass -File ./build.ps1
-          ./dist/app/EngCand.exe --selftest --userdir=./.selftest
-          Get-Content ./.selftest/selftest.log | Select-Object -Last 2
+          if ($LASTEXITCODE -ne 0) { throw "build.ps1 失败（exit=$LASTEXITCODE）" }
+          # 自检结果写到 exe 同目录（--userdir 指定位置），退出码 0 = PASS
+          $ud = Join-Path $PWD '.selftest'
+          New-Item -ItemType Directory -Force -Path $ud | Out-Null
+          & ./dist/app/EngCand.exe --selftest "--userdir=$ud"
+          if ($LASTEXITCODE -ne 0) { throw "selftest 失败（exit=$LASTEXITCODE）" }
+          $log = Get-ChildItem -Recurse -Filter selftest.log -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($null -eq $log) { throw '找不到 selftest.log' }
+          Get-Content $log.FullName | Select-Object -Last 3
+          if (-not (Select-String -Path $log.FullName -Pattern 'RESULT: PASS' -Quiet)) { throw 'selftest 未 PASS' }
 
       - name: 打包便携版（启动.bat + dist\app + 文档）
         shell: pwsh

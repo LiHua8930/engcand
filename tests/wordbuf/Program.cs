@@ -533,8 +533,10 @@ namespace EngCandCoreTests
                     Check("inject_replace_return", ok2, "ReplaceText(2,\"xy\")=" + ok2);
                     Check("inject_replace_backspaces", form.CapturedVkDownCount(VK_BACK) == 2,
                           "VK_BACK down=" + form.CapturedVkDownCount(VK_BACK) + "（期望 2）");
-                    Check("inject_replace_chars", form.CapturedCharsText() == "x,y",
-                          "WM_CHAR=[" + form.CapturedCharsText() + "]（期望 x,y）");
+                    // VK_BACK 在 TextBox 中同样产生 WM_CHAR 0x08，所以只断言字符部分末尾是 x,y
+                    string repChars = form.CapturedCharsText();
+                    Check("inject_replace_chars", repChars == "x,y" || repChars.EndsWith("x,y"),
+                          "WM_CHAR=[" + repChars + "]（期望 x,y 或 0x0008,...,x,y）");
 
                     // --- 4c. TextBox 端到端 ---
                     form.SetupTextBox("hello");
@@ -555,9 +557,16 @@ namespace EngCandCoreTests
                     // --- 4d. delayMs 参数路径 ---
                     form.ResetCapture();
                     bool ok4 = TextInjector.TypeUnicode("z", 5);
-                    Pump(250);
-                    Check("inject_delay_path", ok4 && form.CapturedCharsText() == "z",
-                          "WM_CHAR=[" + form.CapturedCharsText() + "] ok=" + ok4);
+                    // CI 环境下消息泵回放可能更慢：轮询等待字符到达（最多 2 秒）
+                    string delayed = "";
+                    for (int w = 0; w < 40; w++)
+                    {
+                        Pump(50);
+                        delayed = form.CapturedCharsText();
+                        if (delayed.Length > 0) break;
+                    }
+                    Check("inject_delay_path", ok4 && delayed == "z",
+                          "WM_CHAR=[" + delayed + "] ok=" + ok4);
                 }
                 finally
                 {
